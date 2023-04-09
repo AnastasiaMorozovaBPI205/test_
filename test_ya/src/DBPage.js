@@ -9,6 +9,8 @@ import Handsontable from 'handsontable';
 import { HotTable, HotColumn } from "@handsontable/react";
 import "handsontable/dist/handsontable.min.css";
 
+import {v4 as uuidv4} from 'uuid';
+
 import axios from 'axios';
 
 export let getTablesNames = [];
@@ -172,17 +174,6 @@ list-style-type: none;
     //  setColumnTypes(columnTypes => {
     //   return columnTypes.slice(1)});
 
-    /// Запрос для получения таблицы
-    axios.get(`http://localhost:8000/api/table/get-table-by-name?table_name=${name}`)
-      .then(res => {
-        console.log(res);
-        console.log(res.data);
-
-        /// записать результат
-        /// пример json: {"table_name": "имя", "columns_amount": 2, "column_infos": [[name1, type], [name2, type]], "primary_key": "name1"}
-
-      })
-
     /// Запрос для получения данных таблицы
     axios.get(`http://localhost:8000/api/table/get-data?table_name=${name}`)
       .then(res => {
@@ -191,7 +182,8 @@ list-style-type: none;
 
         /// записать результат
         /// пример json:
-
+        settingsSelectedTable.colHeaders = res.data[0]
+        dataSelectedTable = res.data.slice(1)
       })
 
     setSelectedTable([selectedTable, name]);
@@ -241,8 +233,15 @@ list-style-type: none;
   }
 
   const sendRequest = () => {
+    const id = uuidv4();
     /// Запрос отправления SQL запроса
-    axios.post(`http://localhost:8000/api/table-query/add-new-query-to-table?table_name=${selectedTable}&query=${inputQueryRef.current.value}`)
+    axios.post(`http://localhost:8000/api/table-query/add-new-query-to-table?query_id=${id}&table_name=${selectedTable}&query=${inputQueryRef.current.value}`)
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      })
+
+    axios.post(`http://localhost:8000/api/table-query/execute-table-query-by-id?query_id=${id}`)
       .then(res => {
         console.log(res);
         console.log(res.data);
