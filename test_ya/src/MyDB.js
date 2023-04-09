@@ -37,11 +37,12 @@ const MyDB = () => {
     navigate(path);
 
     /// Запрос на получение имен всех БД пользователя
-    axios.post(`http://localhost:8000/api/db/get-all-db`)
+    axios.get(`http://localhost:8000/api/db/get-all-db`)
     .then(res => {
       console.log(res);
       console.log(res.data);
 
+      dataBases = []
       for (let i = 0; i < res.data.length; i++) {
         dataBases.push(res.data[i])
       }

@@ -224,10 +224,12 @@ list-style-type: none;
 
     setModalActive(false);
 
+    const colHeadStr = JSON.stringify(columnHeaders);
+    const colTypeStr = JSON.stringify(columnTypes);
     /// Запрос создания новой таблицы
     axios.post(`http://localhost:8000/api/table/create-table?table_name=${inputTableRef.current.value}
     &columns_amount=${columnHeaders.length}&primary_key=${inputPrimaryKeyRef.current.value}`,
-      { columnHeaders, columnTypes })
+      { colHeadStr, colTypeStr })
       .then(res => {
         console.log(res);
         console.log(res.data);
