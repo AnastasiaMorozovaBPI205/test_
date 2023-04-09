@@ -42,7 +42,9 @@ const MyDB = () => {
       console.log(res);
       console.log(res.data);
 
-      dataBases = res.data;
+      for (let i = 0; i < res.data.length; i++) {
+        dataBases.push(res.data[i])
+      }
     })    
   }
 
