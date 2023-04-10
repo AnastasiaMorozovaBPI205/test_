@@ -72,7 +72,7 @@ justify-content: center;
 }
 `;
 
-const currentDBPath = selectedDBName == "" ? "" : "/myDB/" + selectedDBName;
+//const currentDBPath = selectedDBName == "" ? "" : "/myDB/" + selectedDBName;
  
   return (
     <Auth>

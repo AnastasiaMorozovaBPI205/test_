@@ -41,13 +41,17 @@ export default function AllDBPage() {
     navigate(path);
 
     /// запрос post - получить все таблицы
-    axios.post(`http://localhost:8000/api/db/get-all-tables_in_db?db_name=${selectedDBName}`)
+    axios.get(`http://localhost:8000/api/db/get-all-tables_in_db?db_name=${selectedDBName}`)
       .then(res => {
         console.log(res);
         console.log(res.data);
 
         /// записать все таблицы
-        getTablesNames = res.data;
+        //getTablesNames = res.data;
+        getTablesNames.splice(0, getTablesNames.length);
+        for (let i = 0; i < res.data.length; i++) {
+          getTablesNames.push(res.data[i]);
+        }
       })
   }
 
@@ -55,7 +59,9 @@ export default function AllDBPage() {
     <div className="AllDBPage">
       <Header>Мои БД:</Header>
       <DBList>
-        {dataBases.map(name => (<li>
+        {
+        dataBases=["hell"] &&
+        dataBases.map(name => (<li>
           <Button onClick={(dbName) => openDB(dbName)}>{'\u2728'}{name}</Button>
         </li>))}
       </DBList>

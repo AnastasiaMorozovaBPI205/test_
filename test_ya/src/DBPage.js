@@ -9,7 +9,7 @@ import Handsontable from 'handsontable';
 import { HotTable, HotColumn } from "@handsontable/react";
 import "handsontable/dist/handsontable.min.css";
 
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import axios from 'axios';
 
@@ -17,9 +17,10 @@ export let getTablesNames = [];
 
 export default function DBPage() {
 
-  let dataSelectedTable = [[]];
+  const [dataSelectedTable, setDataSelectedTable] = useState([]);
+  //let dataSelectedTable = [];
   const settingsSelectedTable = {
-    colHeaders: true,
+    colHeaders: [],
     rowHeaders: true,
     height: 250,
     contextMenu: true,
@@ -31,9 +32,10 @@ export default function DBPage() {
     licenseKey: 'non-commercial-and-evaluation',
   };
 
-  let dataResponse = [];
+  //let dataResponse = [];
+  const [dataResponse, setDataResponse] = useState([]);
   const settingsResponse = {
-    colHeaders: true,
+    colHeaders: false,
     rowHeaders: true,
     height: 500,
     licenseKey: 'non-commercial-and-evaluation',
@@ -175,19 +177,24 @@ list-style-type: none;
     //   return columnTypes.slice(1)});
 
     /// Запрос для получения данных таблицы
-    axios.get(`http://localhost:8000/api/table/get-data?table_name=${name}`)
+    axios.get(`http://localhost:8000/api/table/get-data?table_name=${name.target.innerText}`)
       .then(res => {
         console.log(res);
         console.log(res.data);
 
         /// записать результат
         /// пример json:
-        settingsSelectedTable.colHeaders = res.data[0]
-        dataSelectedTable = res.data.slice(1)
+
+        //const arr = [["aaa", "baaa", "d"], ["1", "2", "3"]];
+        settingsSelectedTable.colHeaders = res.data[0];
+        setColumnHeaders(res.data[0]);
+        setDataSelectedTable(res.data.slice(1));
       })
 
-    setSelectedTable([selectedTable, name]);
-    setIsTableOpen([isTableOpen, true]);
+
+
+    setSelectedTable(name.target.innerText);
+    setIsTableOpen(true);
   }
 
   const addTable = () => {
@@ -203,15 +210,15 @@ list-style-type: none;
 
     const colNamesStr = String(inputColumnNamesRef.current.value).split(" ");
     for (let i = 0; i < colNamesStr.length; i++) {
-      // columnHeaders.push(colNamesStr[i]);
-      setColumnHeaders([...columnHeaders, colNamesStr[i]]);
+      columnHeaders.push(colNamesStr[i]);
+      //setColumnHeaders([...columnHeaders, colNamesStr[i]]);
       // setColumnHeaders(columnHeaders => {return [...columnHeaders, colNamesStr[i]]})
     }
 
     const colTypesStr = String(inputColumnTypesRef.current.value).split(" ");
     for (let i = 0; i < colTypesStr.length; i++) {
-      //columnTypes.push(colTypesStr[i]);
-      setColumnTypes([...columnTypes, colTypesStr[i]]);
+      columnTypes.push(colTypesStr[i]);
+      //setColumnTypes([...columnTypes, colTypesStr[i]]);
     }
 
     setModalActive(false);
@@ -247,11 +254,11 @@ list-style-type: none;
         console.log(res.data);
 
         /// записать ответ
-        settingsResponse.colHeaders = res.data[0]
-        dataResponse = res.data.slice(1)
+
+        setDataResponse(res.data)
       })
 
-    setGotResponse(gotResponse, true);
+    setGotResponse(true);
   }
 
   const saveChangesInTable = () => {
@@ -264,7 +271,7 @@ list-style-type: none;
   }
 
 
-  function getCol() {
+  function getColumnSelectedTable() {
     //alert(columnHeaders.length)
     const col = [];
     for (let i = 0; i < columnHeaders.length; i++) {
@@ -273,9 +280,23 @@ list-style-type: none;
     return col;
   }
 
-  function getHotTable() {
+  function getSelectedTable() {
     return <HotTable data={dataSelectedTable} settings={settingsSelectedTable} colHeaders={columnHeaders}>
-      {getCol()}
+      {getColumnSelectedTable()}
+    </HotTable>;
+  }
+
+  function getColumnResponseTable() {
+    const col = [];
+    for (let i = 0; i < dataResponse[0].length; i++) {
+      col.push(<HotColumn type="text" />);
+    }
+    return col;
+  }
+
+  function getResponseTable() {
+    return <HotTable data={dataResponse} settings={settingsResponse}>
+      {getColumnResponseTable()}
     </HotTable>;
   }
 
@@ -284,7 +305,7 @@ list-style-type: none;
       <FormSelectedTable>
         <Header>Таблица1</Header>
         <Divider></Divider>
-        {isTableOpen ? getHotTable() : <></>}
+        {isTableOpen ? getSelectedTable() : <></>}
         <Button onClick={() => saveChangesInTable()}>Сохранить изменения</Button>
       </FormSelectedTable>
 
@@ -309,8 +330,7 @@ list-style-type: none;
       <FormResponse>
         <Header>Ответ</Header>
         <Divider></Divider>
-        {gotResponse ? <HotTable data={dataResponse} settings={settingsResponse}>
-        </HotTable> : <></>}
+        {gotResponse ? getResponseTable() : <></>}
       </FormResponse>
 
       <AddTableModal active={modalActive} setActive={setModalActive}>
