@@ -62,7 +62,7 @@ export default function AllDBPage() {
         {
         dataBases=["hell"] &&
         dataBases.map(name => (<li>
-          <Button onClick={(dbName) => openDB(dbName)}>{'\u2728'}{name}</Button>
+          <Button onClick={(dbName) => openDB(dbName)}>{name}</Button>
         </li>))}
       </DBList>
     </div>

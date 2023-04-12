@@ -38,6 +38,7 @@ export default function DBPage() {
     colHeaders: false,
     rowHeaders: true,
     height: 500,
+    colWidths: 100,
     licenseKey: 'non-commercial-and-evaluation',
   };
 
@@ -176,6 +177,7 @@ list-style-type: none;
     //  setColumnTypes(columnTypes => {
     //   return columnTypes.slice(1)});
 
+    try {
     /// Запрос для получения данных таблицы
     axios.get(`http://localhost:8000/api/table/get-data?table_name=${name.target.innerText}`)
       .then(res => {
@@ -190,45 +192,33 @@ list-style-type: none;
         setColumnHeaders(res.data[0]);
         setDataSelectedTable(res.data.slice(1));
       })
-
-
+    } catch (error) {
+      console.error(error);
+      alert(error)
+    }
 
     setSelectedTable(name.target.innerText);
     setIsTableOpen(true);
   }
 
   const addTable = () => {
-    // tables.push(inputTableRef.current.value);
-
-    /// ИНИЦИАЛИЗИРОВАТЬ МАССИВЫ ХЕДЕРОВ И ТИПОВ
-    setColumnHeaders([]);
-    //  setColumnHeaders(columnHeaders => {
-    //   return columnHeaders.slice(1)});
-    //  setColumnTypes(columnTypes => {
-    //   return columnTypes.slice(1)});
-
 
     const colNamesStr = String(inputColumnNamesRef.current.value).split(" ");
     for (let i = 0; i < colNamesStr.length; i++) {
       columnHeaders.push(colNamesStr[i]);
-      //setColumnHeaders([...columnHeaders, colNamesStr[i]]);
-      // setColumnHeaders(columnHeaders => {return [...columnHeaders, colNamesStr[i]]})
     }
 
     const colTypesStr = String(inputColumnTypesRef.current.value).split(" ");
     for (let i = 0; i < colTypesStr.length; i++) {
       columnTypes.push(colTypesStr[i]);
-      //setColumnTypes([...columnTypes, colTypesStr[i]]);
     }
 
     setModalActive(false);
 
-    const colHeadStr = JSON.stringify(columnHeaders);
-    const colTypeStr = JSON.stringify(columnTypes);
     /// Запрос создания новой таблицы
     axios.post(`http://localhost:8000/api/table/create-table?table_name=${inputTableRef.current.value}
     &columns_amount=${columnHeaders.length}&primary_key=${inputPrimaryKeyRef.current.value}`,
-      { colHeadStr, colTypeStr })
+      { "columns_names": columnHeaders, "columns_types": columnTypes })
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -248,7 +238,9 @@ list-style-type: none;
         console.log(res.data);
       })
 
-    axios.post(`http://localhost:8000/api/table-query/execute-table-query-by-id?query_id=${id}`)
+    
+    try {
+    axios.get(`http://localhost:8000/api/table-query/execute-table-query-by-id?id=${id}`)
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -257,13 +249,17 @@ list-style-type: none;
 
         setDataResponse(res.data)
       })
+    } catch (error) {
+      console.error(error);
+      alert(error)
+    }
 
     setGotResponse(true);
   }
 
   const saveChangesInTable = () => {
     /// Запрос сохранения изменений в данных таблицы
-    axios.post(`http://localhost:8000/api/table/save-data`, { dataSelectedTable })
+    axios.post(`http://localhost:8000/api/table/save-data`, { "data": dataSelectedTable })
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -272,7 +268,6 @@ list-style-type: none;
 
 
   function getColumnSelectedTable() {
-    //alert(columnHeaders.length)
     const col = [];
     for (let i = 0; i < columnHeaders.length; i++) {
       col.push(<HotColumn type={columnTypes[i]} />);
@@ -288,6 +283,10 @@ list-style-type: none;
 
   function getColumnResponseTable() {
     const col = [];
+    if (dataResponse.length != 0) {
+      return;
+    }
+
     for (let i = 0; i < dataResponse[0].length; i++) {
       col.push(<HotColumn type="text" />);
     }
@@ -303,7 +302,7 @@ list-style-type: none;
   return (
     <MasterForm>
       <FormSelectedTable>
-        <Header>Таблица1</Header>
+        <Header>Таблица</Header>
         <Divider></Divider>
         {isTableOpen ? getSelectedTable() : <></>}
         <Button onClick={() => saveChangesInTable()}>Сохранить изменения</Button>
