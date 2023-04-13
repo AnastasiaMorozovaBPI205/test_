@@ -28,7 +28,7 @@ export default function DBPage() {
     dropdownMenu: true,
     filters: true,
     columnSorting: true,
-    licenseKey: 'non-commercial-and-evaluation',
+    licenseKey: 'non-commercial-and-evaluation'
   };
 
   const [dataResponse, setDataResponse] = useState([]);
@@ -37,7 +37,7 @@ export default function DBPage() {
     rowHeaders: true,
     height: 500,
     colWidths: 100,
-    licenseKey: 'non-commercial-and-evaluation',
+    licenseKey: 'non-commercial-and-evaluation'
   };
 
   const Button = styled.button`
@@ -171,26 +171,31 @@ list-style-type: none;
     setColumnHeaders([]);
 
     try {
-    /// Запрос для получения данных таблицы
-    axios.get(`http://localhost:8000/api/table/get-data?table_name=${name.target.innerText}`)
-      .then(res => {
-        console.log(res);
-        console.log(res.data);
+      /// Запрос для получения данных таблицы
+      axios.get(`http://localhost:8000/api/table/get-data?table_name=${name.target.innerText}`)
+        .then(res => {
+          console.log(res);
+          console.log(res.data);
 
-        /// записать результат
-        /// пример json:
+          /// записать результат
+          /// пример json:
 
-        //const arr = [["aaa", "baaa", "d"], ["1", "2", "3"]];
-        settingsSelectedTable.colHeaders = res.data[0];
-        setColumnHeaders(res.data[0]);
-        setDataSelectedTable(res.data.slice(1));
-      })
+          //const arr = [["aaa", "baaa", "d"], ["1", "2", "3"]];
+          settingsSelectedTable.colHeaders = res.data[0];
+          setColumnHeaders(res.data[0]);
+          setDataSelectedTable(res.data.slice(1));
+        })
     } catch (error) {
       console.error(error);
       alert(error)
     }
 
     // const arr = [["aaa", "baaa", "d"], ["1", "2", "3"]];
+    // setColumnHeaders(arr[0]);
+    // setDataSelectedTable(arr.slice(1));
+
+    // const arr = [["aaa", "baaa", "d"], ["1", "2", "3"]];
+    // settingsSelectedTable.colHeaders = arr[0];
     // setColumnHeaders(arr[0]);
     // setDataSelectedTable(arr.slice(1));
 
@@ -235,17 +240,17 @@ list-style-type: none;
         console.log(res.data);
       })
 
-    
+
     try {
-    axios.get(`http://localhost:8000/api/table-query/execute-table-query-by-id?id=${id}`)
-      .then(res => {
-        console.log(res);
-        console.log(res.data);
+      axios.get(`http://localhost:8000/api/table-query/execute-table-query-by-id?id=${id}`)
+        .then(res => {
+          console.log(res);
+          console.log(res.data);
 
-        /// записать ответ
+          /// записать ответ
 
-        setDataResponse(res.data)
-      })
+          setDataResponse(res.data)
+        })
     } catch (error) {
       console.error(error);
       alert(error)
@@ -273,9 +278,26 @@ list-style-type: none;
   }
 
   function getSelectedTable() {
-    return <HotTable data={dataSelectedTable} settings={{settingsSelectedTable}} colHeaders={columnHeaders}>
+    return <HotTable data={dataSelectedTable} settings={settingsSelectedTable} colHeaders={columnHeaders}>
       {getColumnSelectedTable()}
     </HotTable>;
+
+    // return <HotTable
+    //   data={[['Мявкинс', '10/12/2023', '4']]}
+    //   height={450}
+    //   colWidths={[140, 192, 100]}
+    //   colHeaders={['имя', 'дата_рождения', 'кол-во_лап']}
+    //   dropdownMenu={true}
+    //   contextMenu={true}
+    //   multiColumnSorting={true}
+    //   filters={true}
+    //   rowHeaders={true}
+    //   licenseKey="non-commercial-and-evaluation"
+    // >
+    //   <HotColumn type="text" />
+    //   <HotColumn type="date" />
+    //   <HotColumn type="numeric" />
+    // </HotTable>;
   }
 
   function getColumnResponseTable() {
