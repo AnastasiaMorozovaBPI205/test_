@@ -18,7 +18,6 @@ export let getTablesNames = [];
 export default function DBPage() {
 
   const [dataSelectedTable, setDataSelectedTable] = useState([]);
-  //let dataSelectedTable = [];
   const settingsSelectedTable = {
     colHeaders: [],
     rowHeaders: true,
@@ -32,7 +31,6 @@ export default function DBPage() {
     licenseKey: 'non-commercial-and-evaluation',
   };
 
-  //let dataResponse = [];
   const [dataResponse, setDataResponse] = useState([]);
   const settingsResponse = {
     colHeaders: false,
@@ -170,12 +168,7 @@ list-style-type: none;
   const [modalActive, setModalActive] = useState(false);
 
   const openTable = (name) => {
-    /// ИНИЦИАЛИЗИРОВАТЬ МАССИВЫ ХЕДЕРОВ И ТИПОВ
     setColumnHeaders([]);
-    //  setColumnHeaders(columnHeaders => {
-    //   return columnHeaders.slice(1)});
-    //  setColumnTypes(columnTypes => {
-    //   return columnTypes.slice(1)});
 
     try {
     /// Запрос для получения данных таблицы
@@ -196,6 +189,10 @@ list-style-type: none;
       console.error(error);
       alert(error)
     }
+
+    // const arr = [["aaa", "baaa", "d"], ["1", "2", "3"]];
+    // setColumnHeaders(arr[0]);
+    // setDataSelectedTable(arr.slice(1));
 
     setSelectedTable(name.target.innerText);
     setIsTableOpen(true);
@@ -276,14 +273,17 @@ list-style-type: none;
   }
 
   function getSelectedTable() {
-    return <HotTable data={dataSelectedTable} settings={settingsSelectedTable} colHeaders={columnHeaders}>
+    return <HotTable data={dataSelectedTable} settings={{settingsSelectedTable}} colHeaders={columnHeaders}>
       {getColumnSelectedTable()}
     </HotTable>;
   }
 
   function getColumnResponseTable() {
     const col = [];
-    if (dataResponse.length != 0) {
+    if (dataResponse === undefined) {
+      return;
+    }
+    if (dataResponse.length === 0) {
       return;
     }
 
@@ -342,3 +342,5 @@ list-style-type: none;
     </MasterForm>
   );
 }
+
+console.log(`Handsontable: v${Handsontable.version} (${Handsontable.buildDate}) Wrapper: v${HotTable.version} React: v${React.version}`);

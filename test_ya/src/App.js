@@ -12,6 +12,11 @@ import DBPage from './DBPage';
 import { selectedDBName } from './AllDBPage';
 import axios from 'axios';
  
+import { HotTable, HotColumn } from "@handsontable/react";
+import "handsontable/dist/handsontable.min.css";
+import "pikaday/css/pikaday.css";
+import Handsontable from 'handsontable';
+
 const clientID = 'c81b1fc8556e47c289665b29d76527e9';
  
 export default function App() {
@@ -71,8 +76,6 @@ justify-content: center;
   height: 100%;
 }
 `;
-
-//const currentDBPath = selectedDBName == "" ? "" : "/myDB/" + selectedDBName;
  
   return (
     <Auth>
@@ -93,8 +96,28 @@ justify-content: center;
             <LogoutButton>Выйти</LogoutButton>
           </YandexLogout>
         </NavState>
-        
       }
     </Auth>
   );
 }
+
+// export default function App () {
+//   return <HotTable
+//   data={[['Мявкинс', '10/12/2023', '4']]}
+//   height={450}
+//   colWidths={[140, 192, 100]}
+//   colHeaders={['имя', 'дата_рождения', 'кол-во_лап']}
+//   dropdownMenu={true}
+//   contextMenu={true}
+//   multiColumnSorting={true}
+//   filters={true}
+//   rowHeaders={true}
+//   licenseKey="non-commercial-and-evaluation"
+// >
+//   <HotColumn type="text" />
+//   <HotColumn type="date" />
+//   <HotColumn type="numeric" />
+// </HotTable>;
+// };
+
+console.log(`Handsontable: v${Handsontable.version} (${Handsontable.buildDate}) Wrapper: v${HotTable.version} React: v${React.version}`);
